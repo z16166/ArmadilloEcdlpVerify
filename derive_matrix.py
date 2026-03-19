@@ -19,12 +19,36 @@ import sys
    （经过穷举测定，Armadillo 使用的这套参数下，平方极为精准地等效于“向左循环移位 1 Bit”）。
 5. 我们项目里碰巧已经硬编码了公钥 Q 在这两种基底体系下计算出来的确定坐标对。
 6. 因此，以 Q 的 X、Y 为起点，分别将它们反复进行 112 次自身平方操作，
-   我们便能以极底的成本制造出高达 226 对满足 V_pb = M · V_onb 约束的方程映射向量。
+   我们便能以极低的成本制造出高达 226 对满足 V_pb = M · V_onb 约束的方程映射向量。
 7. 在 GF(2) 的有限域运算中，从上述 226 个结果中按顺序选出前 113 个能够保持线性无关的 V_onb 列向量，
    即可填满构成一个满秩的 113×113 方阵 V_ONB，与严格对应的目标方阵 V_PB。
 8. 于是由 M · V_ONB = V_PB 顺势推导出：
        M = V_PB · V_ONB⁻¹
    这就是该脚本能在无需复杂的高斯周期和迹函数（Trace）代数求根下，直接以 O(n³) 将目标完全解开的直接原因。
+
+---------------------------------------------------------
+English Translation:
+
+1. In the finite field GF(2¹¹³), the squaring operation (a ↦ a²) is known as the Frobenius endomorphism.
+   Since the coefficients explicitly belong to GF(2), it satisfies (a+b)² = a² + b², making it a pure linear transformation.
+2. The conversion from ONB2 (Optimal Normal Basis) to PB (Polynomial Basis) is fundamentally a strict field isomorphism M.
+   Field isomorphisms uniquely preserve all addition and multiplication structures, thus they commute perfectly with the "squaring" operation.
+   For any element V in the field, its bit column vectors V_pb and V_onb seamlessly satisfy:
+       V_pb = M · V_onb
+       (V²)pb = M · (V²)onb
+       (V^(2^k))pb = M · (V^(2^k))onb
+3. In PB, V² can be computed logically by calculating the polynomial square and reducing modulo the irreducible polynomial x¹¹³ + x⁹ + 1.
+4. In ONB2, the mathematical selection of basis elements is highly distinct. The core innate property of an ONB is:
+   squaring an arbitrary field element directly corresponds to a "cyclic shift" of its geometric coordinate bit sequence!
+   (Through exhaustive testing, under the parameters used by Armadillo, squaring is precisely mirrored as a "Left Cyclic Shift by 1 Bit").
+5. Serendipitously, our project already has the exact coordinate pairs for the public key Q calculated under both basis systems hardwired.
+6. Consequently, starting with the X and Y coordinates of Q and repeatedly squaring each of them 112 times sequentially,
+   we generate up to 226 paired map vectors that satisfy the overarching linear constraint V_pb = M · V_onb at virtually zero computational cost.
+7. Operating in the finite field GF(2), we exclusively select the first 113 linearly independent V_onb column vectors from the 226 permutations above.
+   These elegantly form a full-rank 113×113 square matrix V_ONB, symmetrically mapped to its counterpart target matrix V_PB.
+8. From M · V_ONB = V_PB, we reliably deduce that:
+       M = V_PB · V_ONB⁻¹
+   This is the underlying reason why this script can directly decipher the entire invariant conversion matrix intrinsically in O(n³), efficiently sidestepping complex analytical Gaussian periods or Trace-based root finding methods.
 """
 
 
