@@ -1,11 +1,11 @@
 # basis_convert.py
-# ONB2 <-> 多项式基 (x^113 + x^9 + 1) 转换工具
-# 适用于 Armadillo/Encryptionizer 的 GF(2^113) Koblitz 曲线
+# ONB2 <-> Polynomial Basis (x^113 + x^9 + 1) Conversion Tool
+# For Armadillo/Encryptionizer GF(2^113) Koblitz Curve
 
 import os
 
-# 113x113 变换矩阵 M: ONB2 -> Poly
-# M 的每一行存储为一个 113-bit 整数（bit 0 = LSB）
+# 113x113 Transformation Matrix M: ONB2 -> Poly
+# Each row of M is stored as a 113-bit integer (bit 0 = LSB)
 _M_ROWS = [
     10384593717069655257060992658440191,
     5932746425579544039253705523019385,
@@ -123,15 +123,15 @@ _M_ROWS = [
 ]
 
 def _compute_inverse_matrix():
-    """计算逆矩阵 M^{-1} (Poly -> ONB2)"""
+    """Compute inverse matrix M^{-1} (Poly -> ONB2)"""
     n = 113
-    # 构建增广矩阵 [M | I]
+    # Build augmented matrix [M | I]
     aug = []
     for i in range(n):
         row = [(_M_ROWS[i] >> j) & 1 for j in range(n)]
         ident = [1 if j == i else 0 for j in range(n)]
         aug.append(row + ident)
-    # GF(2) 高斯消元
+    # GF(2) Gaussian Elimination
     for col in range(n):
         piv = -1
         for row in range(col, n):
@@ -158,10 +158,10 @@ def _get_inv():
     return _M_INV_ROWS
 
 def onb2_to_poly(onb_val):
-    """将 ONB2 表示的域元素（十进制整数）转换为多项式基表示（整数）"""
+    """Convert ONB2 domain element (decimal integer) to Polynomial Basis representation (integer)"""
     result = 0
     for j in range(113):
-        # M[j] 行与 onb_val 的 GF(2) 点积
+        # GF(2) dot product of M[j] row and onb_val
         bits = _M_ROWS[j] & onb_val
         # popcount mod 2
         parity = bin(bits).count('1') & 1
@@ -169,7 +169,7 @@ def onb2_to_poly(onb_val):
     return result
 
 def poly_to_onb2(poly_val):
-    """将多项式基表示的域元素（整数）转换为 ONB2 表示（十进制整数）"""
+    """Convert Polynomial Basis representation (integer) to ONB2 representation (decimal integer)"""
     inv = _get_inv()
     result = 0
     for j in range(113):
@@ -179,30 +179,30 @@ def poly_to_onb2(poly_val):
     return result
 
 def convert_point_onb2_to_poly(x_dec, y_dec):
-    """将 ONB2 表示的椭圆曲线点坐标转换为多项式基十六进制"""
+    """Convert ONB2 elliptic curve point coordinates to Polynomial Basis hex"""
     px = onb2_to_poly(x_dec)
     py = onb2_to_poly(y_dec)
     return (hex(px), hex(py))
 
 def convert_point_poly_to_onb2(x_hex, y_hex):
-    """将多项式基十六进制坐标转换为 ONB2 十进制"""
+    """Convert Polynomial Basis hex coordinates to ONB2 decimal"""
     x_int = int(x_hex, 16) if isinstance(x_hex, str) else x_hex
     y_int = int(y_hex, 16) if isinstance(y_hex, str) else y_hex
     ox = poly_to_onb2(x_int)
     oy = poly_to_onb2(y_int)
     return (ox, oy)
 
-# ========== 命令行用法 ==========
+# ========== Command Line Usage ==========
 if __name__ == '__main__':
     import sys
     
     print("=" * 60)
-    print("  GF(2^113) ONB2 ↔ 多项式基 转换工具")
-    print("  适用于 Armadillo/Encryptionizer ECC")
+    print("  GF(2^113) ONB2 <-> Polynomial Basis Conversion Tool")
+    print("  For Armadillo/Encryptionizer ECC")
     print("=" * 60)
     
-    # 验证 Cert #6
-    print("\n--- 验证 Certificate #6 ---")
+    # Verify Cert #6
+    print("\n--- Verify Certificate #6 ---")
     qx_onb = 3600264749883462755399490686438491
     qy_onb = 419754383946908414551514272523181
     
@@ -214,13 +214,13 @@ if __name__ == '__main__':
     
     expected_px = '0x1a103b8147d1d1b9f2d0d76a86fcf'
     expected_py = '0x10fb3f3f075fda6efbab1b9ce548e'
-    print(f"  X 匹配: {px == expected_px}")
-    print(f"  Y 匹配: {py == expected_py}")
+    print(f"  X Match: {px == expected_px}")
+    print(f"  Y Match: {py == expected_py}")
     
-    # 反向验证
-    print("\n--- 反向验证 (Poly -> ONB2) ---")
+    # Reverse Verification
+    print("\n--- Reverse Verification (Poly -> ONB2) ---")
     ox, oy = convert_point_poly_to_onb2(expected_px, expected_py)
-    print(f"  还原 Q.x (dec): {ox}")
-    print(f"  还原 Q.y (dec): {oy}")
-    print(f"  X 匹配: {ox == qx_onb}")
-    print(f"  Y 匹配: {oy == qy_onb}")
+    print(f"  Restored Q.x (dec): {ox}")
+    print(f"  Restored Q.y (dec): {oy}")
+    print(f"  X Match: {ox == qx_onb}")
+    print(f"  Y Match: {oy == qy_onb}")
