@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # basis_convert.py
 # ONB2 <-> Polynomial Basis (x^113 + x^9 + 1) Conversion Tool
 # For Armadillo/Encryptionizer GF(2^113) Koblitz Curve

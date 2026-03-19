@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import basis_convert
 
 # Verification Script: Final Proof of (k, Q) validity
