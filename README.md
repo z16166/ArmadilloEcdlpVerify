@@ -12,6 +12,12 @@ Python verification scripts for Armadillo ECDLP, operating over the elliptic cur
 - **`basis_convert.py`**
   Conversion tool for bidirectional mapping between **Optimal Normal Basis type 2 (ONB2)** and **Polynomial Basis (PB)** representations over GF(2¹¹³).
 
+- **`gen_basepoint.py`**
+  Simulation of the Armadillo C++ base point generation logic.
+  - Faithfully reproduces the custom 32-bit PRNG and `mult()` logic from `keygen_random.cpp`.
+  - Reconstructs the `ECC_RandomPoint` and `ECC_Embed` logic, including the iterative X-coordinate incrementation when quadratic roots are absent.
+  - Validates the base point G = 2 × P derivation for a given `BasePointInit` seed (e.g., `0xC1F7F755`).
+
 - **`derive_matrix.py`**
   Script to algebraically derive the rigorous 113×113 bit conversion matrices (M and M⁻¹) directly from the known coordinates of Q.
   - Generates isomorphic states using the Frobenius endomorphism (squaring) acting as a completely linear transformation constraint in GF(2¹¹³).
@@ -31,4 +37,7 @@ python basis_convert.py
 
 # To deduce and regenerate the exact GF(2) conversion matrices analytically:
 python derive_matrix.py
+
+# To simulate C++ base point generation from a 32-bit seed:
+python gen_basepoint.py
 ```
