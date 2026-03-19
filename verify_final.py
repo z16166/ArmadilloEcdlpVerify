@@ -68,6 +68,7 @@ def is_on_curve(p):
     rhs = gf2_mul(gf2_sqr(x), x) ^ gf2_sqr(x) ^ 1
     return lhs == rhs
 
+# PB = Polynomial Basis, ONB2 = Optimal Normal Basis 2
 def main():
     # Parameters for Encryptionizer
     gx_pb = int('10F2C397CA2D4ABB13FBA7BFFFA95', 16)
