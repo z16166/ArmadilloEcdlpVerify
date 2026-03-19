@@ -7,6 +7,7 @@ Python verification scripts for Armadillo ECDLP, operating over the elliptic cur
 - **`verify_final.py`**
   Final cryptographic verification script.
   - Verifies that the base point G and public key Q precisely reside on the elliptic curve.
+  - Performs **Subgroup Order Verification**: Checks that n × G = O and n × Q = O (where O is the Point at Infinity) to ensure point membership in the prime-order subgroup.
   - Computes the private key scalar multiplication Q = k × G to validate the solution over Polynomial Basis.
 
 - **`basis_convert.py`**
