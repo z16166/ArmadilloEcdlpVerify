@@ -82,6 +82,7 @@ def main():
     qy_onb2 = 419754383946908414551514272523181
 
     k = 0x2082DF1821D6E82CEE6880211228
+    n = 5192296858534827627896703833467507
 
     qx_pb_calc = basis_convert.onb2_to_poly(qx_onb2)
     qy_pb_calc = basis_convert.onb2_to_poly(qy_onb2)
@@ -100,6 +101,21 @@ def main():
         print("[FAILURE] Q in Polynomial Basis does not match Q in ONB2.")
         print(hex(qx_onb2_calc), hex(qx_onb2))
         print(hex(qy_onb2_calc), hex(qy_onb2))
+
+    print(f"Verifying Subgroup Order n = {n}...")
+    # n * G should be Point at Infinity (None)
+    inf_g = ec_mul(n, (gx_pb, gy_pb))
+    if inf_g is None:
+        print("[SUCCESS] n * G = O (Point at Infinity) - Subgroup order is correct for G.")
+    else:
+        print("[FAILURE] n * G != O. Subgroup order verification failed for G.")
+
+    # n * Q should be Point at Infinity (None)
+    inf_q = ec_mul(n, (qx_pb, qy_pb))
+    if inf_q is None:
+        print("[SUCCESS] n * Q = O (Point at Infinity) - Subgroup order is correct for Q.")
+    else:
+        print("[FAILURE] n * Q != O. Subgroup order verification failed for Q.")
 
     print("Verifying if G is on the curve...")
     if is_on_curve((gx_pb, gy_pb)):
